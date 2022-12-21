@@ -19,6 +19,16 @@ interface paymentRequest {
   message: string;
 }
 
+interface refundRequest {
+  originalPaymentReference: string;
+  payerAlias: string;
+  amount: string;
+  currency: string;
+  callbackUrl: string;
+  payeeAlias: string;
+  message: string;
+}
+
 export default class PaymentHandler {
   private _agent: https.Agent;
   private client: Axios;
@@ -58,6 +68,12 @@ export default class PaymentHandler {
     return hexNumber;    
   }
 
+  /**
+   * 
+   * @param options The options for the payment request
+   * @param development If the request is for development or production
+   * @returns The uuid, status and location of the payment request
+   */
   public async createPaymentRequest(
     options: paymentRequest,
     development: boolean = true
@@ -77,8 +93,6 @@ export default class PaymentHandler {
     const url = development
       ? `https://mss.cpc.getswish.net/swish-cpcapi/api/v2/paymentrequests/${uuid}`
       : `https://cpc.getswish.net/swish-cpcapi/api/v1/paymentrequests${uuid}`;
-
-    console.log("Sending request to: ", url);
     
     try {
       const res = await this.client.put(url, data);
@@ -88,19 +102,85 @@ export default class PaymentHandler {
         location: res.headers.location,
       }
     } catch (e: any) {
-      console.log(e.message, "\n", e?.response?.data);
-      return e?.response?.data;
+      return {
+        message: e.message,
+        data : e?.response?.data
+      };
     }
   }
 
-  public async retrievePaymentRequest(location: string, development: boolean = true) { 
+
+  /**
+   * 
+   * @param location The location of the payment request
+   * @returns the data of the payment request
+   */
+  public async retrievePaymentRequest(location: any) { 
     try {
       const res = await this.client.get(location);
       
-      return res;
+      return res.data;
     } catch (e: any) { 
-      console.log(e.message, "\n", e?.response?.data);
-      return e?.response?.data;
+      return {
+        message: e.message,
+        data: e?.response?.data
+      }
+    }
+  }
+
+  /**
+   * 
+   * @param location 
+   * @returns the data of the payment cancellation request
+   */
+  public async cancelPaymentRequest(location: any) { 
+    try { 
+      const res = await this.client.patch(location, [{
+        op: "replace",
+        path: "/status",
+        value: "cancelled",
+      }], {
+        headers: {
+          "Content-Type": "application/json-patch+json"
+        }
+      });
+      return res.data;
+    } catch (e: any) {
+      return {
+        message: e.message,
+        data: e?.response?.data
+      }
+    }
+  }
+
+  public async createRefundRequest(paymentUUID: string, options: refundRequest, development: boolean = false) { 
+    try { 
+      // TODO: error: Callback URL is missing or does not use Https
+      const data = {
+        originalPaymentReference: options.originalPaymentReference,
+        payerAlias: options.payerAlias,
+        amount: options.amount,
+        currency: options.currency,
+        callbackUrl: options.callbackUrl,
+        payeeAlias: options.payeeAlias,
+        message: options.message,
+      }
+
+      console.log("data", data);
+
+      const url = development ? `https://mss.cpc.getswish.net/swish-cpcapi/api/v2/refunds/${this.generateUUID()}` : `https://cpc.getswish.net/swish-cpcapi/api/v2/refunds/${paymentUUID}`;
+
+      console.log("url", url);
+
+      const res = await this.client.put(url, data);
+      return res;
+    } catch (e: any) {
+      return {
+        message: e.message,
+        data: e?.response?.data
+      }
     }
   }
 }
+
+

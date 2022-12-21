@@ -21,7 +21,7 @@ const paymentHandler = new paymentHandler_1.default({
 function makeTestRequest() {
     return __awaiter(this, void 0, void 0, function* () {
         console.log("Making test request...");
-        let res = yield paymentHandler.createPaymentRequest({
+        let payment = yield paymentHandler.createPaymentRequest({
             payeePaymentReference: "1234567890",
             callbackUrl: "https://example.com/api/swishcb/paymentrequests",
             payeeAlias: "1234679304",
@@ -30,8 +30,21 @@ function makeTestRequest() {
             amount: "100",
             message: "Test message",
         }, true);
-        res = yield paymentHandler.retrievePaymentRequest(res.location);
-        console.log(res);
+        const paymentVerification = yield paymentHandler.retrievePaymentRequest(payment.location);
+        console.log(paymentVerification);
+        // const paymentCancelation = await paymentHandler.cancelPaymentRequest(payment.location);
+        // console.log(paymentCancelation);
+        const uuid = payment.uuid;
+        const paymentRefund = yield paymentHandler.createRefundRequest(uuid, {
+            originalPaymentReference: "1234567890",
+            callbackUrl: "https://example.com/api/swishcb/refunds",
+            payerAlias: "460721282737",
+            payeeAlias: "1234679304",
+            currency: "SEK",
+            amount: "50",
+            message: "Test message",
+        }, true);
+        console.log(paymentRefund);
     });
 }
 makeTestRequest();
