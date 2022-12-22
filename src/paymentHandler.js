@@ -35,6 +35,11 @@ class PaymentHandler {
             httpsAgent: this._agent,
         });
     }
+    baseURL(developer = false) {
+        return developer
+            ? "https://mss.cpc.getswish.net/swish-cpcapi/api/v2"
+            : "https://cpc.getswish.net/swish-cpcapi/api/v2";
+    }
     generateUUID() {
         const hexValues = "0123456789ABCDEF";
         let hexNumber = "";
@@ -62,9 +67,7 @@ class PaymentHandler {
                 amount: options.amount,
                 message: options.message,
             };
-            const url = development
-                ? `https://mss.cpc.getswish.net/swish-cpcapi/api/v2/paymentrequests/${uuid}`
-                : `https://cpc.getswish.net/swish-cpcapi/api/v1/paymentrequests${uuid}`;
+            const url = `${this.baseURL(development)}/paymentrequests/${uuid}`;
             try {
                 const res = yield this.client.put(url, data);
                 return {
@@ -144,10 +147,40 @@ class PaymentHandler {
                     message: options.message,
                 };
                 console.log("data", data);
-                const url = development ? `https://mss.cpc.getswish.net/swish-cpcapi/api/v2/refunds/${this.generateUUID()}` : `https://cpc.getswish.net/swish-cpcapi/api/v2/refunds/${paymentUUID}`;
+                const url = `${this.baseURL(development)}/refunds/6E59BC1B1632424E874DDB219AD52357`;
                 console.log("url", url);
                 const res = yield this.client.put(url, data);
                 return res;
+            }
+            catch (e) {
+                return {
+                    message: e.message,
+                    data: (_a = e === null || e === void 0 ? void 0 : e.response) === null || _a === void 0 ? void 0 : _a.data
+                };
+            }
+        });
+    }
+    retrieveRefundRequest(location) {
+        var _a;
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const res = yield this.client.get(location);
+                return res.data;
+            }
+            catch (e) {
+                return {
+                    message: e.message,
+                    data: (_a = e === null || e === void 0 ? void 0 : e.response) === null || _a === void 0 ? void 0 : _a.data
+                };
+            }
+        });
+    }
+    generateQRCode(options) {
+        var _a;
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const res = yield this.client.post("https://api.swish.nu/qr/v2/prefilled", options);
+                return res.data;
             }
             catch (e) {
                 return {

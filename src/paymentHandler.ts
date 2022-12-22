@@ -29,6 +29,20 @@ interface refundRequest {
   message: string;
 }
 
+interface QrRequest { 
+  payee: string;
+  amount?: {
+    value: number;
+    editable?: boolean;
+  };
+  message?: {
+    value: string;
+    editable?: boolean;
+  };
+  size?: number;
+  border?: number;
+}
+
 export default class PaymentHandler {
   private _agent: https.Agent;
   private client: Axios;
@@ -57,6 +71,12 @@ export default class PaymentHandler {
     this.client = axios.create({
       httpsAgent: this._agent,
     });
+  }
+
+  private baseURL(developer: boolean = false) {
+    return developer
+      ? "https://mss.cpc.getswish.net/swish-cpcapi/api/v2"
+      : "https://cpc.getswish.net/swish-cpcapi/api/v2";
   }
 
   private generateUUID() {
@@ -90,9 +110,7 @@ export default class PaymentHandler {
       message: options.message,
     };
 
-    const url = development
-      ? `https://mss.cpc.getswish.net/swish-cpcapi/api/v2/paymentrequests/${uuid}`
-      : `https://cpc.getswish.net/swish-cpcapi/api/v1/paymentrequests${uuid}`;
+    const url = `${this.baseURL(development)}/paymentrequests/${uuid}`;
     
     try {
       const res = await this.client.put(url, data);
@@ -153,7 +171,7 @@ export default class PaymentHandler {
     }
   }
 
-  public async createRefundRequest(paymentUUID: string, options: refundRequest, development: boolean = false) { 
+  public async createRefundRequest(paymentUUID: any, options: refundRequest, development: boolean = false) { 
     try { 
       // TODO: error: Callback URL is missing or does not use Https
       const data = {
@@ -168,12 +186,36 @@ export default class PaymentHandler {
 
       console.log("data", data);
 
-      const url = development ? `https://mss.cpc.getswish.net/swish-cpcapi/api/v2/refunds/${this.generateUUID()}` : `https://cpc.getswish.net/swish-cpcapi/api/v2/refunds/${paymentUUID}`;
+      const url = `${this.baseURL(development)}/refunds/6E59BC1B1632424E874DDB219AD52357`;
 
       console.log("url", url);
 
       const res = await this.client.put(url, data);
       return res;
+    } catch (e: any) {
+      return {
+        message: e.message,
+        data: e?.response?.data
+      }
+    }
+  }
+
+  public async retrieveRefundRequest(location: any) { 
+    try { 
+      const res = await this.client.get(location);
+      return res.data;
+    } catch (e: any) {
+      return {
+        message: e.message,
+        data: e?.response?.data
+      }
+    }
+  }
+
+  public async generateQRCode(options: QrRequest) {
+    try {
+      const res = await this.client.post("https://api.swish.nu/qr/v2/prefilled", options);
+      return res.data;
     } catch (e: any) {
       return {
         message: e.message,

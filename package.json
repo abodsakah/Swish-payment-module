@@ -1,5 +1,5 @@
 {
-  "name": "Swish-module",
+  "name": "swish-module",
   "version": "1.0.0",
   "description": "A module to recive Swish payments using Javascript",
   "main": "index.js",

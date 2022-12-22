@@ -40,6 +40,19 @@ async function makeTestRequest() {
   }, true);
 
   console.log(paymentRefund);
+
+  const qr = await paymentHandler.generateQRCode({
+    payee: "1234679304",
+    amount: {
+      value: 100,
+    },
+    message: {
+      value: "Test message",
+      editable: true,
+    }
+  })
+
+  console.log(qr);
 }
 
 makeTestRequest();
