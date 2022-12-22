@@ -1,4 +1,4 @@
-![Swish payment module](https://i.ibb.co/kyNVS2P/hero.png)
+![Swish payment module](https://i.ibb.co/ZKKgHwp/hero-small.png)
 
 This is a library to integrate the Swedish payment system Swish into your application. This library uses the Swish API to create and handle payments and refunds.
 
