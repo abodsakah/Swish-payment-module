@@ -4,6 +4,13 @@
   "description": "A module to recive Swish payments using Javascript",
   "main": "index.js",
   "author": "Abdulrahman Sakah",
+  "keywords": [
+    "swish",
+    "payment",
+    "module",
+    "javascript",
+    "nodejs"
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",
