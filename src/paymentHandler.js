@@ -145,10 +145,9 @@ class PaymentHandler {
                     callbackUrl: options.callbackUrl,
                     payeeAlias: options.payeeAlias,
                     message: options.message,
+                    payerPaymentReference: options.payerPaymentReference
                 };
-                console.log("data", data);
                 const url = `${this.baseURL(development)}/refunds/6E59BC1B1632424E874DDB219AD52357`;
-                console.log("url", url);
                 const res = yield this.client.put(url, data);
                 return res;
             }

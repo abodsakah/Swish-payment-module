@@ -4,7 +4,7 @@ interface agentCerificates {
   key: string;
   ca: string;
 }
-class SwishPaymentHandler extends PaymentHandler {
+export class Swish extends PaymentHandler {
   constructor(certs: agentCerificates) {
     super(certs);
   }

@@ -9,13 +9,13 @@ interface agentCerificates {
 }
 
 interface paymentRequest {
-  payeePaymentReference: string;
+  payeePaymentReference?: string;
   callbackUrl: string;
-  payeeAlias: string;
+  payeeAlias?: string;
   currency: string;
   payerAlias: string;
   amount: string;
-  message: string;
+  message?: string;
 }
 
 interface refundRequest {
@@ -25,7 +25,8 @@ interface refundRequest {
   currency: string;
   callbackUrl: string;
   payeeAlias: string;
-  message: string;
+  message?: string;
+  payerPaymentReference?: string;
 }
 
 interface QrRequest { 
@@ -181,13 +182,10 @@ export default class PaymentHandler {
         callbackUrl: options.callbackUrl,
         payeeAlias: options.payeeAlias,
         message: options.message,
+        payerPaymentReference: options.payerPaymentReference
       }
 
-      console.log("data", data);
-
       const url = `${this.baseURL(development)}/refunds/6E59BC1B1632424E874DDB219AD52357`;
-
-      console.log("url", url);
 
       const res = await this.client.put(url, data);
       return res;
