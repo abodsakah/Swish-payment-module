@@ -1,6 +1,6 @@
 {
   "name": "swish-module",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A module to recive Swish payments using Javascript",
   "main": "index.js",
   "author": "Abdulrahman Sakah",
