@@ -1,7 +1,6 @@
 import axios, { Axios } from "axios";
 import https from "https";
 import fs from "fs";
-import { v4 as uuidv4 } from "uuid";
 
 interface agentCerificates {
   cert: string;

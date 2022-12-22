@@ -5,12 +5,13 @@
   "main": "index.js",
   "author": "Abdulrahman Sakah",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/abodsakah/Swish-payment-module"
+  },
   "private": false,
   "dependencies": {
-    "@types/node-forge": "^1.3.1",
-    "@types/uuid": "^9.0.0",
-    "axios": "^1.2.1",
-    "uuid": "^9.0.0"
+    "axios": "^1.2.1"
   },
   "devDependencies": {
     "@types/node": "^18.11.17",
