@@ -1,5 +1,7 @@
 ![Swish payment module](https://i.ibb.co/ZKKgHwp/hero-small.png)
 
+![NPM version](https://badge.fury.io/js/swish-module.svg)
+
 This is a library to integrate the Swedish payment system Swish into your application. This library uses the Swish API to create and handle payments and refunds.
 
 ## Installation
